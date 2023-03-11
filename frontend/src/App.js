@@ -5,6 +5,11 @@ import logo from './logo.svg';
 function App() {
   return (
     <div className="App">
+      <header>
+        <h1>
+          HELLO WORLD !
+        </h1>
+      </header>
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <Counter />
