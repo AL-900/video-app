@@ -1,48 +1,72 @@
+/** @format */
+
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import likeIcon from "../assets/like.svg";
+import unlikeIcon from "../assets/unlike.svg";
 
 function BigVideo() {
-   return (
-			<div className='col-span-full w-full space-y-8 lg:col-span-2'>
-				{/* <!-- video player --> */}
-				<iframe
-					width='100%'
-					className='aspect-video'
-					src='https://www.youtube-nocookie.com/embed/6O4s7v28nlw'
-					title='Some video title'
-					frameBorder=''
-					allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
-					allowFullScreen></iframe>
+	const { videoId } = useParams();
+	const [trunkDescription, setTrunkDescription] = useState(false);
+	const { videos } = useSelector((state) => state.videos);
 
-				{/* <!-- video description --> */}
-				<div>
-					<h1 className='text-lg font-semibold tracking-tight text-slate-800'>Some video title</h1>
-					<div className='pb-4 flex items-center space-between border-b'>
-						<h2 className='text-sm leading-[1.7142857] text-slate-600 w-full'>
-							Uploaded on 23 Nov 2022
-						</h2>
+	const [{ title, date, description, link, likes, unlikes }] = videos?.filter(
+		(v) => v.id.toString() === videoId
+	);
+	const truncateString = (str, num) => {
+		if (str.length > num) {
+			return str.slice(0, num) + "...";
+		} else {
+			return str;
+		}
+	};
 
-						{/* <!-- like/unlike --> */}
-						<div className='flex gap-10 w-48'>
-							<div className='flex gap-1'>
-								<div className='shrink-0'>
-									<img className='w-5 block' src='./assets/like.svg' alt='Like' />
-								</div>
-								<div className='text-sm leading-[1.7142857] text-slate-600'>100K</div>
+
+	return (
+		<div className='col-span-full w-full space-y-8 lg:col-span-2'>
+			<iframe
+				width='100%'
+				className='aspect-video'
+				src={link}
+				title='Some video title'
+				frameBorder=''
+				allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+				allowFullScreen></iframe>
+
+			<div>
+				<h1 className='text-lg font-semibold tracking-tight text-slate-800'>{title}</h1>
+				<div className='pb-4 flex items-center space-between border-b'>
+					<h2 className='text-sm leading-[1.7142857] text-slate-600 w-full'>Uploaded on {date}</h2>
+
+					{/* <!-- like/unlike --> */}
+					<div className='flex gap-10 w-48'>
+						<div className='flex gap-1'>
+							<div className='shrink-0'>
+								<img className='w-5 block cursor-pointer' src={likeIcon} alt='Like' />
 							</div>
-							<div className='flex gap-1'>
-								<div className='shrink-0'>
-									<img className='w-5 block' src='./assets/unlike.svg' alt='Unlike' />
-								</div>
-								<div className='text-sm leading-[1.7142857] text-slate-600'>100K</div>
+							<div className='text-sm leading-[1.7142857] text-slate-600'>{likes}k</div>
+						</div>
+						<div className='flex gap-1'>
+							<div className='shrink-0'>
+								<img className='w-5 block cursor-pointer' src={unlikeIcon} alt='Unlike' />
 							</div>
+							<div className='text-sm leading-[1.7142857] text-slate-600'>{unlikes}K</div>
 						</div>
 					</div>
+				</div>
 
-					<div className='mt-4 text-sm text-[#334155] dark:text-slate-400'>
-						Some video description here
-					</div>
+				<div className='mt-4 text-sm text-[#334155] dark:text-slate-400'>
+					{trunkDescription ? description : truncateString(description, 50)}
+					<button
+						className='mx-5 capitalize font-bold text-blue-500'
+						onClick={() => setTrunkDescription((prev) => !prev)}>
+						{!trunkDescription ? "see more..." : "see less"}
+					</button>
 				</div>
 			</div>
-		);
+		</div>
+	);
 }
 
 export default BigVideo;
