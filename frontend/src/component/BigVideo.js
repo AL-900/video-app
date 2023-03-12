@@ -1,27 +1,29 @@
 /** @format */
 
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import likeIcon from "../assets/like.svg";
 import unlikeIcon from "../assets/unlike.svg";
+import { fetchSingleVideo } from "../features/singleVideo/singleVideoSlice";
 
 function BigVideo() {
 	const { videoId } = useParams();
 	const [trunkDescription, setTrunkDescription] = useState(false);
-	const { videos } = useSelector((state) => state.videos);
+	const { video } = useSelector((state) => state.singleVideo);
+	const { title, date, description, link, likes, unlikes } = video;
+	const disptach = useDispatch();
+	useEffect(() => {
+		disptach(fetchSingleVideo(Number(videoId)));
+	}, [disptach, videoId]);
 
-	const [{ title, date, description, link, likes, unlikes }] = videos?.filter(
-		(v) => v.id.toString() === videoId
-	);
 	const truncateString = (str, num) => {
-		if (str.length > num) {
+		if (str?.length > num) {
 			return str.slice(0, num) + "...";
 		} else {
 			return str;
 		}
 	};
-
 
 	return (
 		<div className='col-span-full w-full space-y-8 lg:col-span-2'>
@@ -39,7 +41,6 @@ function BigVideo() {
 				<div className='pb-4 flex items-center space-between border-b'>
 					<h2 className='text-sm leading-[1.7142857] text-slate-600 w-full'>Uploaded on {date}</h2>
 
-					{/* <!-- like/unlike --> */}
 					<div className='flex gap-10 w-48'>
 						<div className='flex gap-1'>
 							<div className='shrink-0'>
